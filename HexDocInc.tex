@@ -1,0 +1,38 @@
+\documentclass{book} % say
+
+%\usepackage{a4}
+\usepackage{makeidx}
+\makeindex
+\usepackage{verbatim}
+\usepackage{chngcntr}
+\counterwithout{figure}{chapter}
+\usepackage{caption}
+\DeclareCaptionLabelFormat{diagram-format}{\textsc{Diagram #2}}
+\captionsetup{labelformat=diagram-format,labelsep=newline,justification=centering}
+\usepackage{subcaption}
+\usepackage{afterpage}
+\usepackage[section]{placeins}
+\usepackage{fix-cm}
+\usepackage{rotating}
+\usepackage{siunitx}
+
+\usepackage{changepage}
+\usepackage{letltxmacro}
+\LetLtxMacro{\originalfigure}{\figure}
+\LetLtxMacro{\originalendfigure}{\endfigure}
+\renewenvironment{figure}[1][htb]%
+  {\originalfigure[#1]% \begin{figure}[htb]
+   \begin{adjustwidth*}{-.5in}{-.5in}
+  }%
+  {\end{adjustwidth*}\originalendfigure}% \end{figure}
+
+\setcounter{totalnumber}{10}
+\setcounter{topnumber}{10}
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.15}
+
+
+ 
+
+\input{Hex}
+

@@ -1,0 +1,359 @@
+
+\usepackage[letterspace=-75]{microtype}
+\usepackage{amssymb,amsmath}
+\usepackage{tikz,ifthen,calc}
+\usepackage{environ}
+\usepackage{pgfmath}
+\usepackage{xcolor}
+\usepackage{xstring}
+%\usepackage{subscript}
+\usetikzlibrary{calc}
+\usetikzlibrary{intersections}
+%\usetikzlibrary{arrows}
+\usetikzlibrary{arrows.meta}
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=images/]
+
+
+\newcommand\coor[1]{\textsf{\MakeUppercase{#1}}}
+%\newcommand\coor[1]{\textbf{\textsf{\MakeUppercase{#1}}}}
+\newcommand\whiteMove[1]{\tikz{\draw (0, 0) [very thick] circle (.65 ex)}\kern.1em\coor{#1}}
+\newcommand\blackMove[1]{\tikz{\filldraw (0, 0) [very thick] circle (.65 ex)}\kern.1em\coor{#1}}
+%\newcommand\whiteMoveNum[2]{\tikz{\draw (0, 0) [very thick] circle (.65 ex)}\textsubscript{#2}\coor{#1}}
+%\newcommand\blackMoveNum[2]{\tikz{\filldraw (0, 0) [very thick] circle (.65 ex)}\textsubscript{#2}\coor{#1}}
+\newcommand\whiteMoveNum[2]{#2.\kern.1em\tikz{\draw (0, 0) [very thick] circle (.65 ex)}\kern.1em\coor{#1}}
+\newcommand\blackMoveNum[2]{#2.\kern.1em\tikz{\filldraw (0, 0) [very thick] circle (.65 ex)}\kern.1em\coor{#1}}
+\newcommand\sequence[2]{\StrCount{#2 }{ }[\num]\ifthenelse{\equal{#1}{w}}{\pgfmathsetmacro\stoneColorInit{1}}{\pgfmathsetmacro\stoneColorInit{0}}\foreach \i in {1,...,\num} {\pgfmathtruncatemacro\stringStart{\i}\pgfmathtruncatemacro\stringEnd{\i + 1}\StrBetween[\stringStart, \stringEnd]{ #2 }{ }{ }[\str]\pgfmathtruncatemacro\stoneColor{mod(\stoneColorInit + \i, 2)}\ifthenelse{\stoneColor=1}{\ifthenelse{\i=\num}{\blackMove{\str}}{\blackMove{\str}\, }}{\ifthenelse{\i=\num}{\whiteMove{\str}}{\whiteMove{\str}\, }}}}
+\newcommand\sequenceEnum[3]{\StrCount{#3 }{ }[\num]\ifthenelse{\equal{#1}{w}}{\pgfmathsetmacro\stoneColorInit{1}}{\pgfmathsetmacro\stoneColorInit{0}}\foreach \i in {1,...,\num} {\pgfmathtruncatemacro\turnNum{\i - 1 + #2}\pgfmathtruncatemacro\stringStart{\i}\pgfmathtruncatemacro\stringEnd{\i + 1}\StrBetween[\stringStart, \stringEnd]{ #3 }{ }{ }[\str]\pgfmathtruncatemacro\stoneColor{mod(\stoneColorInit + \i, 2)}\ifthenelse{\stoneColor=1}{\ifthenelse{\i=\num}{\blackMoveNum{\str}{\turnNum}}{\blackMoveNum{\str}{\turnNum}\, }}{\ifthenelse{\i=\num}{\whiteMoveNum{\str}{\turnNum}}{\whiteMoveNum{\str}{\turnNum}\, }}}}
+\newcommand\hexUpArrow{\tikz{\fill[scale = 1.4] (.1ex, 0) -- (-.1ex, 0) -- (-.1ex, .9ex) -- (-.4ex, .8ex) -- (0, 1.5ex) -- (.4ex, .8ex) -- (.1ex, .9ex) -- cycle}}
+\newcommand\hexRightArrow{\tikz{\fill[scale = 1.4, rotate=-90] (.1ex, 0) -- (-.1ex, 0) -- (-.1ex, .9ex) -- (-.4ex, .8ex) -- (0, 1.5ex) -- (.4ex, .8ex) -- (.1ex, .9ex) -- cycle}}
+
+\NewEnviron{board}[1]{%
+\newcommand\Alphabet{ABCDEFGHIJKLMNOPQRSTUVWXYZ}
+\newcommand\alphabet{abcdefghijklmnopqrstuvwxyz}
+\newcommand\getx[2]{##1 + .5 * (##2)}
+\newcommand\gety[2]{.86603 * (#1 + 1 - (##2))}
+\edef\shownHexes{}
+
+\newcommand\setclip[4]{ %left col, top row, right col, bottom row
+    \pgfmathsetmacro\clipleft{\getx{##1}{##2}}
+    \pgfmathsetmacro\cliptop{\gety{##1}{##2}}
+    \pgfmathsetmacro\clipright{\getx{##3}{##4}}
+    \pgfmathsetmacro\clipbottom{\gety{##3}{##4}}
+
+    \clip (\clipleft, \cliptop) rectangle (\clipright, \clipbottom);
+}
+\newcommand\labelPoint[2]{ %
+    \StrChar{##1}{1}[\colChar]
+    \StrGobbleLeft{##1}{1}[\row]
+    \StrPosition{\alphabet}{\colChar}[\col]
+    \pgfmathsetmacro\x{\getx{\col}{\row}}
+    \pgfmathsetmacro\y{\gety{\col}{\row}}
+    \draw [very thick,shift={(\x, \y)}] (0, 0) node{\textls{\textsf{##2}}};
+}
+
+\newcommand\w[2]{ %
+    \StrChar{##1}{1}[\colChar]
+    \StrGobbleLeft{##1}{1}[\row]
+    \StrPosition{\alphabet}{\colChar}[\col]
+    \pgfmathsetmacro\x{\getx{\col}{\row}}
+    \pgfmathsetmacro\y{\gety{\col}{\row}}
+    %\draw [very thick,fill=white,shift={(\x, \y)}] (0, 0) circle (0.39cm) node{\textls{\textsf{##2}}};
+    \draw [line width=1.4pt,fill=white,shift={(\x, \y)}] (0, 0) circle (0.39cm) node{\textls{\textsf{##2}}};
+}
+\renewcommand\b[2]{ %
+    \StrChar{##1}{1}[\colChar]
+    \StrGobbleLeft{##1}{1}[\row]
+    \StrPosition{\alphabet}{\colChar}[\col]
+    \pgfmathsetmacro\x{\getx{\col}{\row}}
+    \pgfmathsetmacro\y{\gety{\col}{\row}}
+    \filldraw [thick,shift={(\x, \y)}] (0, 0) circle (0.39cm) node[text=white]{\textls{\textsf{##2}}};
+}
+\newcommand\dotCell[1]{ %
+    \StrChar{##1}{1}[\colChar]
+    \StrGobbleLeft{##1}{1}[\row]
+    \StrPosition{\alphabet}{\colChar}[\col]
+    \pgfmathsetmacro\x{\getx{\col}{\row}}
+    \pgfmathsetmacro\y{\gety{\col}{\row}}
+    \filldraw [thick,shift={(\x, \y)}] (0, 0) circle (0.15cm);
+}
+\renewcommand\enumerate[3]{ %
+    \StrGobbleRight{##3 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+    \ifthenelse{\equal{##1}{w}}{
+        \pgfmathsetmacro\stoneColorInit{1}
+    }{
+        \pgfmathsetmacro\stoneColorInit{0}
+    }
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\str]
+        \pgfmathtruncatemacro\stoneNum{\i - 1 + ##2}
+        \pgfmathtruncatemacro\stoneColor{mod(\stoneColorInit + \i, 2)}
+        \IfSubStr{\shownHexes}{\str}{%
+            \ifthenelse{\stoneColor=1}{
+                \b{\str}{\stoneNum}
+            }{
+                \w{\str}{\stoneNum}
+            }
+        }{}
+    }
+}
+\newcommand\alternate[2]{ %
+    \StrGobbleRight{##2 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+    \ifthenelse{\equal{##1}{w}}{
+        \pgfmathsetmacro\stoneColorInit{1}
+    }{
+        \pgfmathsetmacro\stoneColorInit{0}
+    }
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\str]
+        \pgfmathtruncatemacro\stoneColor{mod(\stoneColorInit + \i, 2)}
+        \IfSubStr{\shownHexes}{\str}{%
+            \ifthenelse{\stoneColor=1}{
+                \b{\str}{}
+            }{
+                \w{\str}{}
+            }
+        }{}
+    }
+}
+\newcommand\blackStones[1]{ %
+    \StrGobbleRight{##1 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\str]
+        \b{\str}{}
+    }
+}
+\newcommand\whiteStones[1]{ %
+    \StrGobbleRight{##1 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\str]
+        \w{\str}{}
+    }
+}
+\newcommand\dotCells[1]{ %
+    \StrGobbleRight{##1 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\str]
+        \dotCell{\str}
+    }
+}
+\newcommand\drawHex[3]{ %col, row, color
+    \pgfmathsetmacro\x{\getx{##1}{##2}}
+    \pgfmathsetmacro\y{\gety{##1}{##2}}
+
+    \StrChar{\alphabet}{##1}[\colText]
+    \xdef\shownHexes{\shownHexes \colText##2}
+
+    \draw[draw=black!50!white, fill=##3, thin, shift={(\x, \y)}, scale=.57735]
+        (30:1) -- (90:1) -- (150:1) -- (210:1) -- (270:1) -- (330:1) -- cycle;
+}
+\newcommand\shadeHexes[1]{ %
+    \StrGobbleRight{##1 }{0}[\str] %copy the string into a macro
+    \StrCount{\str}{ }[\num]
+
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\pos]
+
+        \StrChar{\pos}{1}[\colChar]
+        \StrGobbleLeft{\pos}{1}[\row]
+        \StrPosition{\alphabet}{\colChar}[\col]
+
+        \drawHex{\col}{\row}{black!10!white}
+    }
+}
+\newcommand\outlineHexes[2][border] { %
+    \StrGobbleRight{##2 }{0}[\str] %copy the string into a macro
+    \StrSubstitute{\str}{ }{!}[\strDelim]%str with ! between coordinates 
+    \StrCount{\str}{ }[\num]
+    \foreach \i in {1,...,\num} {
+        \pgfmathtruncatemacro\stringStart{\i}
+        \pgfmathtruncatemacro\stringEnd{\i + 1}
+        \StrBetween[\stringStart, \stringEnd]{ \str}{ }{ }[\pos]
+        \StrChar{\pos}{1}[\colChar]
+        \StrGobbleLeft{\pos}{1}[\row]
+        \StrPosition{\alphabet}{\colChar}[\col]
+        \pgfmathsetmacro\x{\getx{\col}{\row}}
+        \pgfmathsetmacro\y{\gety{\col}{\row}}
+        \pgfmathtruncatemacro\maxrow{#1 + 1}
+        \pgfmathtruncatemacro\maxcol{#1 + 2}
+        \foreach \rowOff/\colOff/\angleS/\angleE in {-1/0/90/150, -1/1/30/90, 0/-1/150/210, 0/1/330/30, 1/-1/210/270, 1/0/270/330} {
+        	   \pgfmathtruncatemacro\nrow{\row + \rowOff}
+            \pgfmathtruncatemacro\ncol{\col + \colOff + 1} %a bit of oddness to get the \ncol = 0 case to work out
+            \StrChar{.\alphabet}{\ncol}[\nColText] %put a char in front of \alphabet that wont match anything
+            \IfSubStr{\strDelim}{\nColText\nrow!}{}{%
+                \ifthenelse{\equal{##1}{noborder} \AND \( \nrow = 0 \OR \nrow = \maxrow \OR \ncol = 1 \OR \ncol = \maxcol \)}{
+                }{
+		\draw[draw=black, ultra thick, shift={(\x, \y)}, line cap=round,scale=.57735] (\angleS:1) -- (\angleE:1);
+	      }
+            }
+        }
+    }
+}
+\newcommand\drawArrow[2] {
+   \StrChar{##1}{1}[\startColChar]
+    \StrGobbleLeft{##1}{1}[\startRow]
+    \StrPosition{\alphabet}{\startColChar}[\startCol]
+    \pgfmathsetmacro\xStart{\getx{\startCol}{\startRow}}
+    \pgfmathsetmacro\yStart{\gety{\startCol}{\startRow}}
+   \StrChar{##2}{1}[\endColChar]
+    \StrGobbleLeft{##2}{1}[\endRow]
+    \StrPosition{\alphabet}{\endColChar}[\endCol]
+    \pgfmathsetmacro\xEnd{\getx{\endCol}{\endRow}}
+    \pgfmathsetmacro\yEnd{\gety{\endCol}{\endRow}}
+    \draw [>={Latex[length=2mm]},->,shorten >=-1mm] (\xStart, \yStart) -- (\xEnd, \yEnd);
+}
+\newcommand\drawRow[3]{ %row, col start, col end
+    \foreach \col in {##2,...,##3} {
+        \drawHex{\col}{##1}{black!2!white}
+    }
+}
+\newcommand\drawRows[4]{ %row start, row end, col start, col end
+    \foreach \row in {##1,...,##2} {
+        \drawRow{\row}{##3}{##4}
+    }
+}
+\newcommand\drawBoarderLeft[5]{ %{col}{row start}{row end}{top type}{bottom type}
+    \pgfmathsetmacro\segments{##3 - ##2}
+    \drawBoarderFill{##1}{##2}{\segments}{-60}{white}{##4}{##5}
+}
+\newcommand\drawBoarderRight[5]{ %{col}{row start}{row end}{top type}{bottom type}
+    \pgfmathsetmacro\segments{##3 - ##2}
+    \drawBoarderFill{##1}{##3}{\segments}{120}{white}{##5}{##4}
+}
+\newcommand\drawBoarderBottom[5]{ %{row}{col start}{col end}{left type}{right type}
+    \pgfmathsetmacro\segments{##3 - ##2}
+    \drawBoarderFill{##2}{##1}{\segments}{0}{black}{##4}{##5}
+}
+\newcommand\drawBoarderTop[5]{ %{row}{col start}{col end}{left type}{right type}
+    \pgfmathsetmacro\segments{##3 - ##2}
+    \drawBoarderFill{##3}{##1}{\segments}{180}{black}{##5}{##4}
+}
+\newcommand\drawBoarderFill[7]{ %{col}{row}{segments}{rotate}{color}{start type}{end type}
+                                %For the types: o - obtuse, a - acute, p - perpendicular
+    \pgfmathsetmacro\xs{\getx{##1}{##2}}
+    \pgfmathsetmacro\ys{\gety{##1}{##2}}
+
+    \pgfmathsetmacro\segments{##3}
+
+    \begin{scope}[shift={(\xs,\ys)},rotate=##4]
+        %p1--p2 defines the line along the bottom
+        \coordinate (p1) at (-60:0.8);
+        \coordinate (p2) at ($ (p1) + (1, 0) $);
+
+        \ifthenelse{\equal{##6}{o}}{
+            \coordinate (B) at (-120:0.5); %the center of the lower left segment of the first hex
+            \coordinate (A) at (intersection of 0,0--B and p1--p2);
+        }{}{}
+        \ifthenelse{\equal{##6}{p}}{
+            \coordinate (B) at (-150:0.57735); %lower left corner of the first hex
+            \coordinate (X1) at ($ (B) + (0, 1) $);
+            \coordinate (A) at (intersection of X1--B and p1--p2);
+        }{}{}
+        \ifthenelse{\equal{##6}{a}}{
+            \coordinate (B) at (-150:0.57735); %lower left corner of the first hex
+            \coordinate (A) at (intersection of 0,0--B and p1--p2);
+        }{}{}
+
+        \ifthenelse{\equal{##7}{o}}{
+            \coordinate (C) at ($ (-60:0.5) + (\segments,0) $); %the center of the lower right segment of the last hex
+            \coordinate (D) at (intersection of \segments,0--C and p1--p2);
+        }{}
+        \ifthenelse{\equal{##7}{p}}{
+            \coordinate (C) at ($ (-30:0.57735) + (\segments,0) $); %lower right corner of the last hex
+            \coordinate (X2) at ($ (C) + (0, 1) $);
+            \coordinate (D) at (intersection of X2--C and p1--p2);
+        }{}
+        \ifthenelse{\equal{##7}{a}}{
+            \coordinate (C) at ($ (-30:0.57735) + (\segments,0) $); %lower right corner of the last hex
+            \coordinate (D) at (intersection of \segments,0--C and p1--p2);
+        }{}
+
+
+        \draw [fill=##5, line cap=round] (A) -- (B) -- (-90:0.57735)
+        \foreach \i in {1,...,\segments} {
+            -- ++ ( 30:0.57735)
+            -- ++ (-30:0.57735)
+        }
+        -- (C) -- (D) (D) -- (A);
+
+    \end{scope}
+}
+\newcommand\drawColLabelsTop[3]{  %row, col start, col end
+    \pgfmathsetmacro\row{##1-1.25}
+    \drawColLabels{\row}{##2}{##3}
+}
+\newcommand\drawColLabelsBottom[3]{  %row, col start, col end
+    \pgfmathsetmacro\row{##1+1.25}
+    \drawColLabels{\row}{##2}{##3}
+}
+\newcommand\drawRowLabelsLeft[3]{  %col, row start, row end
+    \pgfmathsetmacro\col{##1-1.25}
+    \drawRowLabels{\col}{##2}{##3}
+}
+\newcommand\drawRowLabelsRight[3]{  %col, row start, row end
+    \pgfmathsetmacro\col{##1+1.25}
+    \drawRowLabels{\col}{##2}{##3}
+}
+\newcommand\drawColLabels[3]{ %row, col start, col end
+    \foreach \i in {##2,...,##3} {
+        \pgfmathsetmacro\x{\getx{\i}{##1}}
+        \pgfmathsetmacro\y{\gety{\i}{##1}}
+
+        \draw [shift={(\x, \y)}] node{\textls{\textsf{\StrChar{\Alphabet}{\i}}}};
+    }
+}
+\newcommand\drawRowLabels[3]{ %col, row start, row end
+    \foreach \i in {##2,...,##3} {
+        \pgfmathsetmacro\x{\getx{##1}{\i}}
+        \pgfmathsetmacro\y{\gety{##1}{\i}}
+
+        \draw [shift={(\x, \y)}] node{\textls{\textsf{\i}}};
+    }
+}
+\newcommand\drawFullBoard{ %
+    \drawColLabelsTop{1}{1}{#1}
+    \drawRowLabelsLeft{1}{1}{#1}
+    \drawRows{1}{#1}{1}{#1}
+    \drawBoarderBottom{#1}{1}{#1}{o}{a}
+    \drawBoarderTop{1}{1}{#1}{a}{o}
+    \drawBoarderLeft{1}{1}{#1}{a}{o}
+    \drawBoarderRight{#1}{1}{#1}{o}{a}
+    
+}
+
+\newcommand\drawFullBoardNoLabels{ %
+    \drawRows{1}{#1}{1}{#1}
+    \drawBoarderBottom{#1}{1}{#1}{o}{a}
+    \drawBoarderTop{1}{1}{#1}{a}{o}
+    \drawBoarderLeft{1}{1}{#1}{a}{o}
+    \drawBoarderRight{#1}{1}{#1}{o}{a}
+    
+}
+
+\begin{tikzpicture} [scale=.55, every node/.style={font=\normalsize,scale=1}]%font=\Large,scale=.55
+\BODY
+\end{tikzpicture}
+}
+
