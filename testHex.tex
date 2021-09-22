@@ -3,6 +3,14 @@
 
 \begin{figure}[!htb]
 \centering
+\begin{board}{13}
+\drawFullBoard
+\end{board}
+\caption{The board}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
 \begin{board}{13}{}
 \drawColLabelsBottom{13}{4}{13}
 \drawRowLabelsRight{13}{6}{13}
@@ -23,5 +31,150 @@
 \label{fig:j9_opening_cont2}
 \end{figure}
 
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\centering
+\begin{board}{4}
+\drawRow{3}{2}{4}
+\drawRow{4}{1}{4}
+\drawBoarderBottom{4}{1}{4}{p}{p}
+\shadeHexes{c3 b4 c4}
+\b{c3}{\hexUpArrow}
+\end{board}
+\caption*{Template II}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\centering
+\begin{board}{6}
+\drawRow{4}{3}{6}
+\drawRow{5}{2}{6}
+\drawRow{6}{1}{6}
+\shadeHexes{d4 e4 c5 d5 e5 b6 c6 d6 e6}
+\drawBoarderBottom{6}{1}{6}{p}{p}
+\b{d4}{\hexUpArrow}
+\end{board}
+\caption*{Template IIIa}
+\end{subfigure}
+\caption{Edge templates}
+\label{fig:edge_templates_simple}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}[b]{0.3\linewidth}
+\centering
+\begin{board}{6}
+\drawRow{4}{3}{6}
+\drawRow{5}{2}{6}
+\drawRow{6}{1}{6}
+\shadeHexes{d4 e4 c5 d5 e5 b6 c6 d6 e6}
+\drawBoarderBottom{6}{1}{6}{p}{p}
+\outlineHexes{d4 c5 b6 c6}
+\b{d4}{\hexUpArrow}
+\b{c5}{}
+\end{board}
+\end{subfigure}
+\begin{subfigure}[b]{0.3\linewidth}
+\centering
+\begin{board}{6}
+\drawRow{4}{3}{6}
+\drawRow{5}{2}{6}
+\drawRow{6}{1}{6}
+\shadeHexes{d4 e4 c5 d5 e5 b6 c6 d6 e6}
+\drawBoarderBottom{6}{1}{6}{p}{p}
+\outlineHexes{d4 e4 d5 e5 d6 e6}
+\b{d4}{\hexUpArrow}
+\b{e5}{}
+\end{board}
+\end{subfigure}
+\caption{Template IIIa reductions}
+\label{fig:template_iiia_reductions}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\begin{board}{13}
+\drawRow{10}{4}{11}
+\drawRow{11}{3}{11}
+\drawRow{12}{2}{11}
+\drawRow{13}{1}{11}
+\drawBoarderBottom{13}{1}{11}{p}{p}
+\alternate{b}{d11 d12 e11 e12}
+\b{c11}{\hexRightArrow}
+\w{b12}{\hexRightArrow}
+\w{c12}{}
+\labelPoint{f11}{A}
+\labelPoint{g10}{B}
+\labelPoint{g11}{C}
+\end{board}
+\caption{The attacking player's options: push (\coor{A}), jump (\coor{B}) or break (\coor{C})}
+\label{fig:ladder_attack_options}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\begin{subfigure}[b]{0.4\linewidth}
+\centering
+\begin{board}{13}
+\drawRow{8}{11}{13}
+\drawRow{9}{10}{13}
+\drawRow{10}{9}{13}
+\drawRow{11}{8}{13}
+\drawRow{12}{7}{13}
+\drawRow{13}{6}{13}
+\drawBoarderBottom{13}{6}{13}{p}{a}
+\drawBoarderRight{13}{8}{13}{p}{a}
+\b{h11}{\hexRightArrow}
+\w{g12}{\hexRightArrow}
+\blackStones{m10}
+\alternate{w}{h12 i11 i12 j11 j12}
+\enumerate{b}{1}{l11}
+\end{board}
+\end{subfigure}
+\begin{subfigure}[b]{0.4\linewidth}
+\centering
+\begin{board}{13}
+\drawRow{8}{11}{13}
+\drawRow{9}{10}{13}
+\drawRow{10}{9}{13}
+\drawRow{11}{8}{13}
+\drawRow{12}{7}{13}
+\drawRow{13}{6}{13}
+\drawBoarderBottom{13}{6}{13}{p}{a}
+\drawBoarderRight{13}{8}{13}{p}{a}
+\b{h11}{\hexRightArrow}
+\w{g12}{\hexRightArrow}
+\blackStones{m10}
+\alternate{w}{h12 i11 i12 j11 j12 l11}
+\enumerate{w}{2}{k11 l9 k10 k9 j10 j9}
+\end{board}
+\end{subfigure}
+\caption{}
+\label{fig:third_row_switchback}
+\end{figure} 
+
+\begin{figure}[!htb]
+\centering
+\begin{board}{12}
+\drawRow{1}{6}{11}
+\drawRow{2}{4}{12}
+\drawRow{3}{3}{12}
+\drawRow{4}{2}{12}
+\drawRow{5}{1}{12}
+\shadeHexes{g1 h1 i1 f2 g2 h2 i2 j2 d3 e3 f3 g3 h3 i3 j3 k3 c4 d4 e4 f4 g4 h4 i4 j4 k4 b5 c5 d5 e5 f5 g5 h5 i5 j5 k5}
+\b{h1}{\hexUpArrow}
+\enumerate{w}{1}{g3 i2 i3 h3 g5 e4}
+\labelPoint{f2}{D}
+\drawArrow{g4}{f4}
+\drawBoarderBottom{5}{1}{12}{p}{p}
+\end{board}
+\caption{Intrusion at \coor{A}}
+\label{fig:template_va_intrusion_a}
+\end{figure}
+
+An example of a coordinate: \coor{b4}
+
+An example of some moves: \whiteMove{a6}, \blackMoveNum{d10}{3}, \sequence{w}{a5 b7 c7}, \sequenceEnum{b}{5}{j9 j11 k11}
 
 \end{document} 
